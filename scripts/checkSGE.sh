@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # this script checks if SGE has been installed
 # using a series of heuristics, it compiles a list of all sge installations
@@ -107,5 +107,7 @@ else
 		inda=$[$inda+1]
 	done
 fi
+
+#echo $sgedirs
 
 exit $?
