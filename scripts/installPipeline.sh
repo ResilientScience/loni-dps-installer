@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$INSTALL_PIPELINE" ]
 then
@@ -6,6 +6,8 @@ then
     exit 1
 fi
 
+# add /usr/sbin and /sbin to PATH
+export PATH=${PATH}:/usr/sbin:/sbin
 
 NUM_STEPS=`cat $0 | grep pl+ | wc -l`
 NUM_STEPS=$(($NUM_STEPS-1))
@@ -102,33 +104,36 @@ then
             javapath=`echo $javapath | cut -d' ' -f1`
         fi
 
-        /usr/sbin/alternatives --install /usr/bin/java java ${javapath}/bin/java 2
-        /usr/sbin/update-alternatives --set java ${javapath}/bin/java
-        JAVA_HOME=${javapath}
+        # verify that javapath is pointing to the correct location
+        ${javapath}/bin/java -version > /dev/null 2> /dev/null
+	if [ $? == 0 ]; then
+            /usr/sbin/alternatives --install /usr/bin/java java ${javapath}/bin/java 2
+            /usr/sbin/update-alternatives --set java ${javapath}/bin/java
+            JAVA_HOME=${javapath}
 
-        export JAVA_HOME
+            export JAVA_HOME
 
-        echo JAVA_HOME=$JAVA_HOME
+            echo JAVA_HOME=$JAVA_HOME
 
-        # configure JAVA_HOME in /etc/profile
-        if [ -z "`grep JAVA_CONFIG /etc/profile`" ]
-        then
-            echo -e "########## JAVA_CONFIG\nexport JAVA_HOME=$JAVA_HOME\n">> /etc/profile
-        else
-            javahome_lineNumber=$(grep -n "export JAVA_HOME" /etc/profile | cut -d':' -f1)
-            sed -i ${javahome_lineNumber}c"export JAVA_HOME=$JAVA_HOME" /etc/profile
+            # configure JAVA_HOME in /etc/profile
+            if [ -z "`grep JAVA_CONFIG /etc/profile`" ]
+            then
+                echo -e "########## JAVA_CONFIG\nexport JAVA_HOME=$JAVA_HOME\n">> /etc/profile
+            else
+                javahome_lineNumber=$(grep -n "export JAVA_HOME" /etc/profile | cut -d':' -f1)
+                sed -i ${javahome_lineNumber}c"export JAVA_HOME=$JAVA_HOME" /etc/profile
+            fi
+
+            if [ -z "`grep JAVA_CONFIG /etc/csh.login`" ]
+            then
+                echo -e "########## JAVA_CONFIG\nsetenv JAVA_HOME $JAVA_HOME\n">> /etc/csh.login
+            else
+                javahome_lineNumber=$(grep -n "setenv JAVA_HOME" /etc/csh.login | cut -d':' -f1)
+                sed -i ${javahome_lineNumber}c"setenv JAVA_HOME $JAVA_HOME" /etc/csh.login
+            fi
+
+            echo "JDK Installed"
         fi
-
-        if [ -z "`grep JAVA_CONFIG /etc/csh.login`" ]
-        then
-            echo -e "########## JAVA_CONFIG\nsetenv JAVA_HOME $JAVA_HOME\n">> /etc/csh.login
-        else
-            javahome_lineNumber=$(grep -n "setenv JAVA_HOME" /etc/csh.login | cut -d':' -f1)
-            sed -i ${javahome_lineNumber}c"setenv JAVA_HOME $JAVA_HOME" /etc/csh.login
-        fi
-
-
-        echo "JDK Installed"
     else
         echo 'pl@@Oracle JDK@http://www.oracle.com/technetwork/java/javase/downloads/index.html@1. Click on Download JDK button.<br>2. Select Platform: Linux x64 or x86 and click Continue ( username, password is optional )<br>3. Click on jdk-[ver]-linux-[platform].rpm link to begin download.'
         exit 0;
@@ -141,7 +146,9 @@ fi
 # check if JAVA_HOME is set
 if [ -z "$JAVA_HOME" ]
 then
-    JAVA_HOME=`alternatives --display java | grep link | cut -d' ' -f6 | cut -d'/' -f1-4`
+    JAVA_BINARY=`alternatives --display java | grep link | cut -d' ' -f6`
+    JAVA_BIN=`dirname $JAVA_BINARY`
+    JAVA_HOME=`dirname $JAVA_BIN`
     export JAVA_HOME
 fi
 
@@ -159,11 +166,11 @@ fi
 
 echo "pl-->Downloading: "
 echo "pl->Pipeline package"
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/Pipeline.tar.bz2
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/drmaa_plugin.tar.gz
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/jgdi_plugin.tar.gz
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/plgridplugin.tar.gz
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/plgridservice.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/Pipeline.tar.bz2
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/drmaa_plugin.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/jgdi_plugin.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/plgridplugin.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/plgridservice.tar.gz
 
 echo "pl+"
 echo "pl+"
@@ -172,7 +179,7 @@ echo "pl+"
 
 echo "pl-->Downloading: "
 echo "pl->Authentication module library"
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/libjaaspam.so
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/libjaaspam.so
 
 echo "pl+"
 echo "pl+"
@@ -182,14 +189,15 @@ echo "pl->Authentication module"
 
 if [ "$PL_USER_AUTH" = "SSH" ]
 then
-    wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/SSHLocalLoginModule.jar
+    wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/SSHLocalLoginModule.tar.gz
+    tar xmvzf SSHLocalLoginModule.tar.gz
     LOGIN_MODULE_CLASS="edu.ucla.loni.pipeline.security.SSHLocalLoginModule"
     LOGIN_MODULE=':$BASEPATH/dist/lib/SSHLocalLoginModule.jar'
     LOGIN_MODULE_FILE="SSHLocalLoginModule.jar"
     service sshd start
 elif [ "$PL_USER_AUTH" = "PAM" ]
 then
-    wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/PAMLoginModule.jar
+    wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/PAMLoginModule.jar
     LOGIN_MODULE_CLASS="edu.ucla.loni.pipeline.security.LONILoginModule"
     LOGIN_MODULE=':$BASEPATH/dist/lib/PAMLoginModule.jar'
     LOGIN_MODULE_FILE="PAMLoginModule.jar"
@@ -327,6 +335,7 @@ fi
 
 if [ -f $firewall_file ]
 then
+    echo "Configuring firewall to allow for Pipeline communication. A backup of the previous configuration is stored in the /etc/syconfig/ directory."
     if [ -z "`grep enabled $firewall_file`" ]
     then
         # Firewall is Off,
@@ -386,7 +395,7 @@ elif [ "$PL_PLUGIN" = "JGDI" ]
 then
     echo JGDI
     GRIDPLUGIN_USEARRAYJOBS=true
-    GRIDPLUGIN_JARFILES="$PL_LOCATION/dist/gridplugins/JGDIPlugin.jar, $SGE_ROOT/lib/jgdi.jar"
+    GRIDPLUGIN_JARFILES="$PL_LOCATION/dist/gridplugins/JGDIPlugin.jar, $SGE_ROOT/lib/jgdi.jar, $PL_LOCATION/dist/lib/mysql-connector-java-5.1.8-bin.jar, $PL_LOCATION/dist/lib/hsqldb.jar"
     GRIDPLUGIN_CLASS=jgdiplugin.JGDIPlugin
 else
     echo "[NONE]"
@@ -403,7 +412,8 @@ then
     <GridPluginJARFiles>$GRIDPLUGIN_JARFILES</GridPluginJARFiles>
     <GridUseArrayJobs>$GRIDPLUGIN_USEARRAYJOBS</GridUseArrayJobs>
     <GridArrayJobsDynamicIncrease>$GRIDPLUGIN_USEARRAYJOBS</GridArrayJobsDynamicIncrease>
-    <GridSubmissionQueue>$PL_QUEUE</GridSubmissionQueue>"
+    <GridSubmissionQueue>$PL_QUEUE</GridSubmissionQueue>
+    <GridPluginUseRestartableService>true</GridPluginUseRestartableService>"
 fi
 
 ###########CREATING PREFERENCES FILE
@@ -418,7 +428,6 @@ echo "<?xml version="'"'1.0'"'" encoding="'"'UTF-8'"'"?>
     <ServerAdmins>$PL_USER</ServerAdmins>
     <ServerLibraryLocation>$PL_SERVERLIB</ServerLibraryLocation>
     <ServerLibrarySameDirMonitor>false</ServerLibrarySameDirMonitor>
-    <GridPluginUseRestartableService>true</GridPluginUseRestartableService>
     <ServerLibraryMonitorFile>$PL_SERVERLIB/.monitorFile</ServerLibraryMonitorFile>
 </preferences>
 ">> $PL_LOCATION/preferences.xml
@@ -682,7 +691,7 @@ echo "pl-->Downloading: "
 echo "pl->Test input files"
 
 # download test input files
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/test_inputs.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/test_inputs.tar.gz
 
 echo "pl+";
 
@@ -697,25 +706,27 @@ echo "pl-->Installing: "
 echo "pl->Utilities"
 
 # download smartline archive
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/smartline.tar.gz
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/idaget.tar.gz
-wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/xnat.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/smartline.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/idaget.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/xnat.tar.gz
+wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/thumbgen.tar.gz
 
 echo "pl+";
 
 mkdir -p $TOOLS_PATH/PipelineUtilities
 chown $PL_USER $TOOLS_PATH/PipelineUtilities
 
-cp smartline.tar.gz idaget.tar.gz xnat.tar.gz $TOOLS_PATH/PipelineUtilities
+cp smartline.tar.gz idaget.tar.gz xnat.tar.gz thumbgen.tar.gz $TOOLS_PATH/PipelineUtilities
 cd $TOOLS_PATH/PipelineUtilities
 
 # decompress utility archives
 tar xmvzf smartline.tar.gz
 tar xmvzf idaget.tar.gz
 tar xmvzf xnat.tar.gz
+tar xmvzf thumbgen.tar.gz
 
 # clean archives
-rm smartline.tar.gz idaget.tar.gz xnat.tar.gz
+rm smartline.tar.gz idaget.tar.gz xnat.tar.gz thumbgen.tar.gz
 
 echo "pl+";
 

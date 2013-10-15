@@ -257,7 +257,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/BATWING-${BATWING_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/batwing-${BATWING_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/batwing-${BATWING_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download BATWING binaries"
  	        exit 1
@@ -284,7 +284,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_BATWING.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_BATWING.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download BATWING server library"
  	        exit 1
@@ -315,7 +315,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/BayesAss-${BAYESASS_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/bayesass-${BAYESASS_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/bayesass-${BAYESASS_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download BAYESASS binaries"
  	        exit 1
@@ -344,7 +344,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_BayesAss.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_BayesAss.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download BAYESASS server library"
  	        exit 1
@@ -374,7 +374,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/Bowtie-${BOWTIE_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/bowtie-${BOWTIE_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/bowtie-${BOWTIE_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download BOWTIE binaries"
  	        exit 1
@@ -410,7 +410,7 @@ else
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/EMBOSS-${EMBOSS_VERSION} || exit 1
             echo "bitools+"
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/emboss-${EMBOSS_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/emboss-${EMBOSS_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download EMBOSS binaries"
  	        exit 1
@@ -439,7 +439,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_EMBOSS.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_EMBOSS.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download EMBOSS server library"
  	        exit 1
@@ -470,7 +470,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/Formatomatic-${FORMATOMATIC_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/formatomatic-${FORMATOMATIC_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/formatomatic-${FORMATOMATIC_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download Formatomatic binaries"
  	        exit 1
@@ -498,7 +498,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_Formatomatic.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_Formatomatic.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download Formatomatic server library"
  	        exit 1
@@ -528,7 +528,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/GENEPOP-${GENEPOP_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/genepop-${GENEPOP_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/genepop-${GENEPOP_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download GENEPOP binaries"
  	        exit 1
@@ -555,7 +555,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_GENEPOP.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_GENEPOP.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download GENEPOP server library"
  	        exit 1
@@ -585,7 +585,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/GWASS-${GWASS_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/gwass-${GWASS_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/gwass-${GWASS_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download GWASS binaries"
  	        exit 1
@@ -613,7 +613,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_GWASS.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_GWASS.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download GWASS server library"
  	        exit 1
@@ -643,7 +643,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/MAQ-${MAQ_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/maq-${MAQ_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/maq-${MAQ_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download MAQ binaries"
  	        exit 1
@@ -678,7 +678,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/Migrate-${MIGRATE_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/migrate-${MIGRATE_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/migrate-${MIGRATE_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download Migrate binaries"
  	        exit 1
@@ -705,7 +705,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_Migrate.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_Migrate.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download Migrate server library"
  	        exit 1
@@ -735,7 +735,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/mrFAST-${MRFAST_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/mrfast-${MRFAST_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/mrfast-${MRFAST_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download mrFAST binaries"
  	        exit 1
@@ -762,7 +762,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_mrFAST.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_mrFAST.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download mrFAST server library"
  	        exit 1
@@ -792,7 +792,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/Picard-${PICARD_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/picard-${PICARD_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/picard-${PICARD_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download Picard binaries"
  	        exit 1
@@ -820,7 +820,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_Picard.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_Picard.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download Picard server library"
  	        exit 1
@@ -850,7 +850,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/MSA-${MSA_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/msa-${MSA_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/msa-${MSA_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download MSA binaries"
  	        exit 1
@@ -877,7 +877,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_MSA.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_MSA.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download MSA server library"
  	        exit 1
@@ -907,7 +907,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/PLINK-${PLINK_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/plink-${PLINK_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/plink-${PLINK_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download PLINK binaries"
  	        exit 1
@@ -935,7 +935,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_PLINK.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_PLINK.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download PLINK server library"
  	        exit 1
@@ -965,7 +965,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/SamTools-${SAMTOOLS_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/samtools-${SAMTOOLS_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/samtools-${SAMTOOLS_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download SamTools binaries"
  	        exit 1
@@ -1000,7 +1000,7 @@ else
 
             sudo -u $PL_USER rm -Rf ${TOOLS_PATH}/miBLAST-${MIBLAST_VERSION} || exit 1
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/miblast-${MIBLAST_VERSION}.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/miblast-${MIBLAST_VERSION}.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download miBLAST binaries"
  	        exit 1
@@ -1028,7 +1028,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_miBLAST.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_miBLAST.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download miBLAST server library"
  	        exit 1
@@ -1054,7 +1054,7 @@ else
                 sudo -u $PL_USER mkdir -p $PL_SERVERLIB || exit 1
             fi
 
-            wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/serverLib_IntegratedBioinformatics.tar.gz
+            wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/serverLib_IntegratedBioinformatics.tar.gz
             if [ $? -ne 0 ]; then
  	        echo "bitools!Failed to download Integrated Bioinformatics server library"
  	        exit 1
@@ -1083,7 +1083,7 @@ if [ -d ${PL_SERVERLIB} ]; then
 	for x in `ls ${PL_SERVERLIB}/*/*/*pipe 2> /dev/null`; do
                 if [ -f $x ]
                 then
-		            sed -i "s/cranium\.loni\.ucla\.edu/$HOSTNAME/g" $x || exit 1
+		            sed -i "s/cranium\.loni\.usc\.edu/$HOSTNAME/g" $x || exit 1
                 fi
 	done
 	sudo -u $PL_USER touch ${PL_SERVERLIB}/.monitorFile || exit 1

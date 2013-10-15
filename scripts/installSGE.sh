@@ -6,6 +6,9 @@ then
     exit 1
 fi
 
+# add /usr/sbin and /sbin to PATH
+export PATH=${PATH}:/usr/sbin:/sbin
+
 umask 0002
 
 DL_DIR=$(cd `dirname $0` && pwd)
@@ -294,9 +297,9 @@ else
         hwloc_filename="libhwloc.so.5.tar.gz"
         lib="lib"
     fi
-    wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/${sge_filename}
-    wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/${hwloc_filename}
-    wget -c --progress=dot http://users.loni.ucla.edu/~pipeline/dps/sge-8.0.0d-common.tar.gz
+    wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/${sge_filename}
+    wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/${hwloc_filename}
+    wget -c --progress=dot http://users.loni.usc.edu/~pipeline/dps/sge-8.0.0d-common.tar.gz
     if [ $? -ne 0 ]; then
  	echo "sge!Failed to download SGE binaries"
  	exit 1
@@ -337,15 +340,23 @@ fi
 echo "sge-->Configuring: "
 echo "sge->Configuration file"
 
-if [ -z "`grep enabled /etc/sysconfig/system-config-securitylevel`" ]
+firewall_file=/etc/sysconfig/system-config-securitylevel
+if [ ! -f $firewall_file ]
 then
-    # Firewall is Off
-    lokkit -q --selinux='disabled' --disabled --port=ssh:tcp --port=6444:tcp
-    lokkit -q --selinux='disabled' --disabled --port=ssh:tcp --port=6445:tcp
-else
-    # Firewall is On
-    lokkit -q --selinux='disabled' --enabled --port=ssh:tcp --port=6444:tcp
-    lokkit -q --selinux='disabled' --enabled --port=ssh:tcp --port=6445:tcp
+    firewall_file=/etc/sysconfig/system-config-firewall
+fi
+
+if [ -f $firewall_file ]
+then
+    echo "Configuring firewall to allow for gridengine communication. A backup of the previous configuration is stored in the /etc/syconfig/ directory."
+    if [ -z "`grep enabled $firewall_file`" ]
+    then
+        # Firewall is Off
+        lokkit -q --selinux='disabled' --disabled --port=ssh:tcp --port=6444:tcp --port=6445:tcp
+    else
+        # Firewall is On
+        lokkit -q --selinux='disabled' --enabled --port=ssh:tcp --port=6444:tcp --port=6445:tcp
+    fi
 fi
 
 
