@@ -6,6 +6,12 @@ then
     exit 1
 fi
 
+if which alternatives; then
+    FIND_ALTS="alternatives --display"
+else
+    FIND_ALTS="update-alternatives --display"
+fi
+
 # add /usr/sbin and /sbin to PATH
 export PATH=${PATH}:/usr/sbin:/sbin
 
@@ -146,7 +152,7 @@ fi
 # check if JAVA_HOME is set
 if [ -z "$JAVA_HOME" ]
 then
-    JAVA_BINARY=`alternatives --display java | grep link | cut -d' ' -f6`
+    JAVA_BINARY="/$(${FIND_ALTS} java | grep link | cut -d'/' -f2-)"
     JAVA_BIN=`dirname $JAVA_BINARY`
     JAVA_HOME=`dirname $JAVA_BIN`
     export JAVA_HOME
@@ -557,7 +563,9 @@ then
     then
         echo "=======| Modifying Sudoers file"
         requiretty=`grep -n requiretty /etc/sudoers | grep Defaults | cut -d':' -f1`
-        sed -i ${requiretty}c"# Defaults requiretty" /etc/sudoers
+        if [ ! -z "${requiretty}" ]; then
+            sed -i ${requiretty}c"# Defaults requiretty" /etc/sudoers
+        fi
 
         mainpart=$[`grep -n "main part" /etc/sudoers | cut -d':' -f1`-1]
         head -n $mainpart /etc/sudoers > /tmp/sudoers
