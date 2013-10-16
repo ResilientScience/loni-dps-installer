@@ -14,7 +14,7 @@ fi
 export SOURCE_PATH=$(readlink -f ${0%/*})
 export DEST_PATH=$(readlink -f $1)/dist/install_files/
 
-cp ${SOURCE_PATH}/launchInstaller.sh ${DEST_PATH}
+cp ${SOURCE_PATH}/launchInstaller.sh $(readlink -f $1)/
 
 for SRC_FILE in checkHost.sh installNITools.sh installSGE.sh postInstall.sh checkSGE.sh installBioinformaticsTools.sh installPipeline.sh makefile; do
     cp ${SOURCE_PATH}/${SRC_FILE} ${DEST_PATH}
