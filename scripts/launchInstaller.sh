@@ -1,26 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
 args=$@
 
 if [ "`whoami`" = "root" ]
 then
-	if [  ! -f /etc/redhat-release ] || [ -z "`cat /etc/redhat-release | grep CentOS`" ]
-	then
-		echo ""
-		echo "     WARNING: Pipeline Server Installer is designed to run on Linux CentOS 5.8+"
-		echo ""
-		echo "     Using this installer on this OS may DAMAGE YOUR SYSTEM."
-		echo ""
-		echo -n "     Are you sure you want to start the installer anyway [y/n] ?"
-	        read yesno
-		
-		if [ "$yesno" = "y" ] || [ "$yesno" = "yes" ]
-		then
-			echo "Launching the installer..."
-		else
-			exit 1
-		fi
-	fi
+        if [  ! -f /etc/redhat-release ] || [ -z "`cat /etc/redhat-release | grep CentOS`" ]
+        then
+            echo ""
+            echo "     WARNING: Pipeline Server Installer is designed to run on Linux CentOS 5.8+"
+            echo ""
+            echo "     Using this installer on this OS may DAMAGE YOUR SYSTEM."
+            echo ""
+        fi
+
+        if which yum; then
+            INSTALL_PKG="yum -y install"
+        else
+            echo ""
+            echo "     Yum was not found.  Assuming we're using apt instead..."
+            echo ""
+            INSTALL_PKG="apt-get -yq install"
+        fi
 
         head="-Djava.awt.headless=false" 
         if [ $# -ne 0 ]
@@ -81,7 +81,7 @@ then
         then
                 echo "Missing make"
                 echo "The installer requires GNU make. It will install make before proceeding with the rest of the installation."
-                yum -y install make
+                ${INSTALL_PKG} make
         fi
 
         # determine firewall file, which varies between CentOS versions 5 and 6
@@ -89,15 +89,22 @@ then
         if [ ! -f /etc/sysconfig/${firewall_file} ]
         then
             firewall_file=system-config-firewall
+            if [ ! -f /etc/sysconfig/${firewall_file} ]; then
+                firewall_file=""
+            fi
         fi
 
         # create backup files
-        cp /etc/sudoers /etc/profile /etc/csh.login /etc/services /etc/sysconfig/${firewall_file} /tmp
+        cp /etc/sudoers /etc/profile /etc/csh.login /etc/services /tmp
         echo yes | cp --backup=numbered /tmp/sudoers /etc
         echo yes | cp --backup=numbered /tmp/profile /etc
         echo yes | cp --backup=numbered /tmp/csh.login /etc
         echo yes | cp --backup=numbered /tmp/services /etc
-        echo yes | cp --backup=numbered /tmp/${firewall_file} /etc/sysconfig
+
+        if [ -f /etc/sysconfig/${firewall_file} ]; then
+            cp /etc/sysconfig/${firewall_file} /tmp
+            echo yes | cp --backup=numbered /tmp/${firewall_file} /etc/sysconfig
+        fi
 
 	cd dist
 	java -Xmx512m -jar $head PipelineServerInstaller.jar $args
