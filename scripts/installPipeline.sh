@@ -553,11 +553,7 @@ fi '>>$PL_LOCATION/killServer.sh
 chmod +x $PL_LOCATION/killServer.sh
 chown $PL_USER $PL_LOCATION/killServer.sh
 
-
-
-if [ "$INSTALL_SUPERUSER" = "true" ]
-then
-
+install_superuser() {
     ##### PIPELINE CONFIG
     if [ -z "`grep PIPELINE_CONFIG /etc/sudoers`" ]
     then
@@ -568,32 +564,32 @@ then
         fi
 
         mainpart=$[`grep -n "main part" /etc/sudoers | cut -d':' -f1`-1]
-        head -n $mainpart /etc/sudoers > /tmp/sudoers
+        if [ ${mainpart} -ge 0 ]; then
+            head -n $mainpart /etc/sudoers > /tmp/sudoers
+        else
+            cp /etc/sudoers /tmp/sudoers
+        fi
         echo -e "########## PIPELINE_CONFIG\nDefaults env_keep += \"PERL5OPT PERL5LIB PERLLIB JAVA_HOME SGE_ROOT SGE_CELL SGE_PORT SGE_CLUSTER_NAME\"
 Defaults always_set_home" >> /tmp/sudoers
-        lastlines=$[`wc /etc/sudoers | tr -s ' ' |  cut -d' ' -f2`-mainpart]
-        tail -n $lastlines /etc/sudoers >> /tmp/sudoers
-        securelines=`grep -n Defaults[[:space:]]*secure_path /tmp/sudoers | cut -d':' -f1`
-        for secureline in $securelines
-        do
-           sed -i ${secureline}c"Defaults \!secure_path" /tmp/sudoers
-        done
-        mv -f /tmp/sudoers /etc/sudoers
-        chmod 440 /etc/sudoers
+        if [ ${mainpart} -ge 0 ]; then
+            lastlines=$[`wc /etc/sudoers | tr -s ' ' |  cut -d' ' -f2`-mainpart]
+            tail -n $lastlines /etc/sudoers >> /tmp/sudoers
+        fi
+    else
+        cp /etc/sudoers /tmp/sudoers
     fi
 
 
     echo "=======| Making Pipeline power user"
     ##### LONIPipeline_${PL_USER}
 
-    if [ ! -z "`grep LONIPipeline_ /etc/sudoers`" ]
+    if [ ! -z "`grep LONIPipeline_ /tmp/sudoers`" ]
     then
-        LN=`grep -n "LONIPipeline_" /etc/sudoers | cut -f1 -d:`
+        LN=`grep -n "LONIPipeline_" /tmp/sudoers | cut -f1 -d:`
         echo LN=$LN
         END_LN=$(( $LN + 6 ))
         echo END_LN=$END_LN
-        sed -i ${LN},${END_LN}d /etc/sudoers
-        
+        sed -i ${LN},${END_LN}d /tmp/sudoers
     fi
 
 
@@ -605,8 +601,20 @@ Defaults always_set_home" >> /tmp/sudoers
     fi
 
     echo "Modifying sudoers list for $PL_USER"
-    echo -e "########## LONIPipeline_${PL_USER}\nHost_Alias CLUSTER = ${PL_HOSTNAME}\nUser_Alias PIPELINE1 = ${PL_USER}\nUser_Alias PIPELINE2 = ALL,$SUPERUSERS\nRunas_Alias PIPELINE2_RUN = ALL,$SUPERUSERS\nPIPELINE1 CLUSTER = (PIPELINE2_RUN) NOPASSWD: ALL\n" >> /etc/sudoers
+    echo -e "########## LONIPipeline_${PL_USER}\nHost_Alias CLUSTER = ${PL_HOSTNAME}\nUser_Alias PIPELINE1 = ${PL_USER}\nUser_Alias PIPELINE2 = ALL,$SUPERUSERS\nRunas_Alias PIPELINE2_RUN = ALL,$SUPERUSERS\nPIPELINE1 CLUSTER = (PIPELINE2_RUN) NOPASSWD: ALL\nDefaults:PIPELINE1 !secure_path\n" >> /tmp/sudoers
 
+    visudo -c -f /tmp/sudoers || {
+        echo -e "Failed sanity check of /tmp/sudoers.\nNo changes made.";
+        return 1;
+    }
+    mv -f /tmp/sudoers /etc/sudoers
+    chmod 440 /etc/sudoers
+    return 0
+}
+
+if [ "$INSTALL_SUPERUSER" = "true" ]
+then
+    install_superuser()
 fi
 
 
