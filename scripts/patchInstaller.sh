@@ -3,7 +3,7 @@
 # This is a work-around for not having a quick means of knowing how to
 # build the required jar files for the createArchive.sh script.
 
-if [ $# -ne 1] || [ ! -d $1 ]; then
+if [ $# -ne 1 ] || [ ! -d $1 ]; then
     echo "Usage:"
     echo "    $0 <dir>"
     echo ""
