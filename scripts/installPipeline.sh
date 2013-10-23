@@ -508,7 +508,7 @@ fi
 if [ -x /usr/bin/ec2metadata ] && [ ! -e ${PREFS_PATH}/noec2hostname ]
 then
     EC2_HOSTNAME=$(ec2metadata --public-hostname)
-    SED_PROGRAM="s/<Hostname>.*\$/<Hostname>${EC2_HOSTNAME}</Hostname>/"
+    SED_PROGRAM="s/<Hostname>.*\$/<Hostname>${EC2_HOSTNAME}<\/Hostname>/"
     sed -i.orig -e "${SED_PROGRAM}" ${PREFS_PATH}/preferences.xml
 fi
 
