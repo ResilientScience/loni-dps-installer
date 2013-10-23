@@ -18,4 +18,7 @@ cp ${SOURCE_PATH}/launchInstaller.sh $(readlink -f $1)/
 
 for SRC_FILE in checkHost.sh installNITools.sh installSGE.sh postInstall.sh checkSGE.sh installBioinformaticsTools.sh installPipeline.sh makefile; do
     cp ${SOURCE_PATH}/${SRC_FILE} ${DEST_PATH}
+    if [ "${SRC_FILE}" != "makefile" ]; then
+        chmod +x ${DEST_PATH}/${SRC_FILE}
+    fi
 done
