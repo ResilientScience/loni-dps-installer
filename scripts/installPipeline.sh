@@ -352,13 +352,15 @@ then
     fi
 fi
 
-if [ ! -z $SGE_ROOT ]
+if [ ! -z "$SGE_ROOT" ]
 then
     export SGE_ROOT=$SGE_ROOT
 fi
 
-SGE_PORT=`grep sge_qmaster /etc/services | tr -s ' ' | sed -e 's/^[ \t]*//' | cut -d' ' -f2 | cut -d'/' -f1 | uniq`
-if [ ! -z $SGE_PORT ]
+SGE_PORT=$(grep sge-qmaster /etc/services \
+    | sed -e "s/^[ \t]*sge-qmaster[ \t]*\([0-9]\+\)\/.*/\1/" \
+    | uniq)
+if [ ! -z "$SGE_PORT" ]
 then
     export SGE_PORT=$SGE_PORT
 else
