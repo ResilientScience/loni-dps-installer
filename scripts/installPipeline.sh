@@ -502,6 +502,16 @@ else
     export LD_LIBRARY_PATH=$BASEPATH/dist/:$LD_LIBRARY_PATH
 fi
 
+# Utility when running on EC2 instances to automatically patch the
+# hostname.  "touch $PREFS_PATH/noec2hostname" to disable.
+
+if [ -x /usr/bin/ec2metadata ] && [ ! -e ${PREFS_PATH}/noec2hostname ]
+then
+    EC2_HOSTNAME=$(ec2metadata --public-hostname)
+    SED_PROGRAM="s/<Hostname>.*\$/<Hostname>${EC2_HOSTNAME}</Hostname>/"
+    sed -i.orig -e "${SED_PROGRAM}" ${PREFS_PATH}/preferences.xml
+fi
+
 '$JAVA_HOME'/bin/java '$d64' -server '${memory}' -Djava.awt.headless=true -Djava.security.auth.login.config=$BASEPATH/dist/pipeline_jaas.config -cp .:$SGE_ROOT/lib/drmaa.jar'$LOGIN_MODULE':$BASEPATH/dist/Pipeline.jar server.Main -preferences $PREFS_PATH/preferences.xml > $BASEPATH/outputStream.log 2> $BASEPATH/errorStream.log&
 
 if [ $? -eq 0 ]
