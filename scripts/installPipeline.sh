@@ -660,6 +660,10 @@ then
         WHOAMI=`whoami`
         if [ $WHOAMI = "root" ]
         then
+          if [ -f ${DB_PATH}/running.pid ]; then
+             echo "Deleting defunct ${DB_PATH}/running.pid file..."
+             /bin/mv ${DB_PATH}/running.pid /tmp/running.db.pid
+          fi
           if [ -f ${SERVER_PATH}/running.pid ]; then
              echo "Deleting defunct ${SERVER_PATH}/running.pid file..."
              /bin/mv ${SERVER_PATH}/running.pid /tmp
