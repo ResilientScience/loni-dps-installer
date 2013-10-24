@@ -626,7 +626,7 @@ Defaults always_set_home" >> /tmp/sudoers
 
 if [ "$INSTALL_SUPERUSER" = "true" ]
 then
-    install_superuser()
+    install_superuser
 fi
 
 
