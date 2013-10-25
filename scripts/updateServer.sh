@@ -45,4 +45,3 @@ fi
 ${PREFIX} perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/preferences.xml
 
 ${PREFIX} perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/serverLibrary/*/*/*.pipe
-FOO=$(GET http://169.254.169.254/latest/meta-data/)
