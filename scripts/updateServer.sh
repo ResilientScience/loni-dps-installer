@@ -19,6 +19,13 @@ echo "${NewServer}" > ~pipeline/.servername.txt
 
 echo "Update Pipeline server hostname to ${NewServer}"
 
-sudo sudo -u pipeline perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/preferences.xml
+WHOAMI=$(whoami)
+if [ "$WHOAMI" != "pipeline" ]; then
+    PREFIX="sudo sudo -u pipeline"
+else
+    PREFIX=""
+fi
 
-sudo sudo -u pipeline perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/serverLibrary/*/*/*.pipe
+${PREFIX} perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/preferences.xml
+
+${PREFIX} perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/serverLibrary/*/*/*.pipe
