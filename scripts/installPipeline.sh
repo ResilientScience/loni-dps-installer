@@ -1,5 +1,11 @@
 #!/bin/bash
 
+[ -x "$0" ] || {
+    echo "Unable to validate script file path.  Exiting...";
+    exit 1;
+}
+SOURCE_PATH=$(readlink -f ${0%/*})
+
 if [ -z "$INSTALL_PIPELINE" ]
 then
     echo "Please do not run this script manually. Run launchInstaller.sh instead."
@@ -452,7 +458,7 @@ PipelineLogin {
 chown $PL_USER $PL_LOCATION/dist/pipeline_jaas.config
 
 
-###########CREATING LAUNCH SERVER SCRIPT
+###########CREATING LAUNCH SERVER SCRIPT(S)
 echo "=======| Creating launch Server Script"
 echo '
 BASEPATH="'$PL_LOCATION'"
@@ -504,14 +510,8 @@ else
     export LD_LIBRARY_PATH=$BASEPATH/dist/:$LD_LIBRARY_PATH
 fi
 
-# Utility when running on EC2 instances to automatically patch the
-# hostname.  "touch $PREFS_PATH/noec2hostname" to disable.
-
-if [ -x /usr/bin/ec2metadata ] && [ ! -e ${PREFS_PATH}/noec2hostname ]
-then
-    EC2_HOSTNAME=$(ec2metadata --public-hostname)
-    SED_PROGRAM="s/<Hostname>.*\$/<Hostname>${EC2_HOSTNAME}<\/Hostname>/"
-    sed -i.orig -e "${SED_PROGRAM}" ${PREFS_PATH}/preferences.xml
+if [ -x "${BASEPATH}/updateServer.sh" ]; then
+    ${BASEPATH}/updateServer.sh
 fi
 
 '$JAVA_HOME'/bin/java '$d64' -server '${memory}' -Djava.awt.headless=true -Djava.security.auth.login.config=$BASEPATH/dist/pipeline_jaas.config -cp .:$SGE_ROOT/lib/drmaa.jar'$LOGIN_MODULE':$BASEPATH/dist/Pipeline.jar server.Main -preferences $PREFS_PATH/preferences.xml > $BASEPATH/outputStream.log 2> $BASEPATH/errorStream.log&
@@ -529,6 +529,73 @@ fi'>>$PL_LOCATION/launchServer.sh
 chmod +x $PL_LOCATION/launchServer.sh
 chown $PL_USER $PL_LOCATION/launchServer.sh
 
+# ______________________________________________________________________
+
+echo_update_server() {
+    echo '#!/bin/bash
+
+SERVERNAME_PATH="$(readlink -f ~'${PL_USER}')/.servername.txt"
+EC2_MAGIC_IP="169.254.169.254"
+EC2_HOSTNAME_URL="http://${EC2_MAGIC_IP}/latest/meta-data/public-hostname"
+
+# First, figure out what the old server name is...
+
+if [ $# -eq 2 ]; then
+    OldServer=$1
+elif [ -f ${SERVERNAME_PATH} ]; then
+    OldServer=$(cat ${SERVERNAME_PATH})
+else
+    echo "Unable to determine old server name."
+    exit 1
+fi
+
+# Then, figure out what the new server name is...
+
+if [ $# -eq 0 ]; then
+    NewServer=$(GET ${EC2_HOSTNAME_URL}) || {
+        echo "Unable to determine EC2 server name (not on an EC2 instance?).";
+        exit 1;
+    }
+elif [ $# -eq 1 ]; then
+    NewServer=$1;
+elif [ $# -eq 2 ]; then
+    NewServer=$2;
+else 
+    echo "Usage: $0 [[OldServer] NewServer]"
+    exit 1;
+fi
+
+# Finally, go to town...
+
+[ "${NewServer}" = "${OldServer}" ] && {
+    echo "No change to server name detected.";
+    exit 0;
+}
+
+echo "${NewServer}" > ${SERVERNAME_PATH}
+
+echo "Update Pipeline server hostname to ${NewServer}"
+
+WHOAMI=$(whoami)
+if [ "$WHOAMI" != "'${PL_USER}'" ]; then
+    PREFIX="sudo sudo -u '${PL_USER}'"
+else
+    PREFIX=""
+fi
+
+${PREFIX} perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/preferences.xml
+
+${PREFIX} perl -pi -w -e "s/${OldServer}/${NewServer}/g;" /usr/pipeline/serverLibrary/*/*/*.pipe
+'
+}
+
+# ____________________________________________________________
+
+echo_update_server > ${PL_LOCATION}/updateServer.sh
+chmod +x ${PL_LOCATION}/updateServer.sh
+chown ${PL_USER}:${PL_USER} ${PL_LOCATION}/updateServer.sh
+
+# ______________________________________________________________________
 echo "=======| Creating kill Server Script"
 
 ###########CREATING KILL SERVER SCRIPT
