@@ -672,11 +672,12 @@ Defaults always_set_home" >> /tmp/sudoers
     fi
 
 
-    SUPERUSERS="!root"
+    SUPERUSERS='!root'
 
     if [ ! -z "$SUPERUSER_LIST" ]
     then
-        SUPERUSERS+=",!$SUPERUSER_LIST"
+        SUPERUSER_LIST_0=$(echo "${SUPERUSER_LIST}" | sed -e 's/,/,!/g')
+        SUPERUSERS+=',!'${SUPERUSER_LIST_0}
     fi
 
     echo "Modifying sudoers list for $PL_USER"
