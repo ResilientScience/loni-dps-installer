@@ -595,6 +595,12 @@ echo_update_server > ${PL_LOCATION}/updateServer.sh
 chmod +x ${PL_LOCATION}/updateServer.sh
 chown ${PL_USER}:${PL_USER} ${PL_LOCATION}/updateServer.sh
 
+# XXX: The following assumes that $PL_LOCATION is the same as
+# $PL_USER's home directory.  This will break the automated update
+# added to the init script if not true.
+echo "${PL_HOSTNAME}" > ${PL_LOCATION}/.servername.txt
+chown ${PL_USER}:${PL_USER} ${PL_LOCATION}/.servername.txt
+
 # ______________________________________________________________________
 echo "=======| Creating kill Server Script"
 
